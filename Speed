@@ -1,0 +1,207 @@
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
+
+-- Safe GUI parenting for modern mobile executors
+local guiParent = (gethui and gethui()) or game:GetService("CoreGui")
+
+if guiParent:FindFirstChild("NoskillV1") then
+    guiParent.NoskillV1:Destroy()
+end
+
+local player = Players.LocalPlayer
+local speedValue = 0
+local isToggled = false
+
+-- Theme Colors
+local bgDark = Color3.fromRGB(20, 20, 20)
+local bgLighter = Color3.fromRGB(35, 35, 35)
+local accentRed = Color3.fromRGB(220, 20, 60)
+local textWhite = Color3.fromRGB(255, 255, 255)
+
+-- Main GUI Setup
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "NoskillV1"
+screenGui.ResetOnSpawn = false
+screenGui.Parent = guiParent
+
+local mainFrame = Instance.new("Frame")
+mainFrame.Size = UDim2.new(0, 300, 0, 190)
+mainFrame.Position = UDim2.new(0.5, -150, 0.5, -95)
+mainFrame.BackgroundColor3 = bgDark
+mainFrame.BorderSizePixel = 0
+mainFrame.ClipsDescendants = true
+mainFrame.Parent = screenGui
+
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(0, 10)
+corner.Parent = mainFrame
+
+local stroke = Instance.new("UIStroke")
+stroke.Color = accentRed
+stroke.Thickness = 2
+stroke.Parent = mainFrame
+
+-- Topbar (Draggable Area)
+local topBar = Instance.new("Frame")
+topBar.Size = UDim2.new(1, 0, 0, 40)
+topBar.BackgroundColor3 = bgLighter
+topBar.BorderSizePixel = 0
+topBar.Parent = mainFrame
+
+local topCorner = Instance.new("UICorner")
+topCorner.CornerRadius = UDim.new(0, 10)
+topCorner.Parent = topBar
+
+local bottomSquare = Instance.new("Frame")
+bottomSquare.Size = UDim2.new(1, 0, 0, 10)
+bottomSquare.Position = UDim2.new(0, 0, 1, -10)
+bottomSquare.BackgroundColor3 = bgLighter
+bottomSquare.BorderSizePixel = 0
+bottomSquare.Parent = topBar
+
+local titleLabel = Instance.new("TextLabel")
+titleLabel.Size = UDim2.new(1, -50, 1, 0)
+titleLabel.Position = UDim2.new(0, 15, 0, 0)
+titleLabel.BackgroundTransparency = 1
+titleLabel.Text = "Noskill hub V1"
+titleLabel.TextColor3 = textWhite
+titleLabel.Font = Enum.Font.GothamBold
+titleLabel.TextSize = 16
+titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+titleLabel.Parent = topBar
+
+local minimizeBtn = Instance.new("TextButton")
+minimizeBtn.Size = UDim2.new(0, 30, 0, 30)
+minimizeBtn.Position = UDim2.new(1, -40, 0, 5)
+minimizeBtn.BackgroundColor3 = bgDark
+minimizeBtn.Text = "-"
+minimizeBtn.TextColor3 = textWhite
+minimizeBtn.Font = Enum.Font.GothamBold
+minimizeBtn.TextSize = 20
+minimizeBtn.Parent = topBar
+
+local minCorner = Instance.new("UICorner")
+minCorner.CornerRadius = UDim.new(0, 6)
+minCorner.Parent = minimizeBtn
+
+-- Developer Credit
+local creditLabel = Instance.new("TextLabel")
+creditLabel.Size = UDim2.new(1, -30, 0, 20)
+creditLabel.Position = UDim2.new(0, 15, 0, 45)
+creditLabel.BackgroundTransparency = 1
+creditLabel.Text = "Made by Tryty"
+creditLabel.TextColor3 = accentRed
+creditLabel.Font = Enum.Font.GothamSemibold
+creditLabel.TextSize = 12
+creditLabel.TextXAlignment = Enum.TextXAlignment.Left
+creditLabel.Parent = mainFrame
+
+-- Speed Input
+local speedInput = Instance.new("TextBox")
+speedInput.Size = UDim2.new(1, -30, 0, 40)
+speedInput.Position = UDim2.new(0, 15, 0, 75)
+speedInput.BackgroundColor3 = bgLighter
+speedInput.PlaceholderText = "Enter Speed (e.g., 50)"
+speedInput.Text = ""
+speedInput.TextColor3 = textWhite
+speedInput.Font = Enum.Font.GothamMedium
+speedInput.TextSize = 14
+speedInput.Parent = mainFrame
+
+local inputCorner = Instance.new("UICorner")
+inputCorner.CornerRadius = UDim.new(0, 6)
+inputCorner.Parent = speedInput
+
+-- Toggle Button
+local toggleBtn = Instance.new("TextButton")
+toggleBtn.Size = UDim2.new(1, -30, 0, 40)
+toggleBtn.Position = UDim2.new(0, 15, 0, 130)
+toggleBtn.BackgroundColor3 = accentRed
+toggleBtn.Text = "Toggle Speed: OFF"
+toggleBtn.TextColor3 = textWhite
+toggleBtn.Font = Enum.Font.GothamBold
+toggleBtn.TextSize = 14
+toggleBtn.Parent = mainFrame
+
+local toggleCorner = Instance.new("UICorner")
+toggleCorner.CornerRadius = UDim.new(0, 6)
+toggleCorner.Parent = toggleBtn
+
+-- UI Logic & Animations
+local isOpen = true
+minimizeBtn.MouseButton1Click:Connect(function()
+    isOpen = not isOpen
+    local targetSize = isOpen and UDim2.new(0, 300, 0, 190) or UDim2.new(0, 300, 0, 40)
+    local tweenInfo = TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out)
+    TweenService:Create(mainFrame, tweenInfo, {Size = targetSize}):Play()
+    minimizeBtn.Text = isOpen and "-" or "+"
+end)
+
+speedInput.FocusLost:Connect(function()
+    local val = tonumber(speedInput.Text)
+    if val then
+        speedValue = val
+    else
+        speedValue = 0
+        speedInput.Text = ""
+    end
+end)
+
+toggleBtn.MouseButton1Click:Connect(function()
+    isToggled = not isToggled
+    if isToggled then
+        toggleBtn.Text = "Toggle Speed: ON"
+        TweenService:Create(toggleBtn, TweenInfo.new(0.3), {BackgroundColor3 = Color3.fromRGB(40, 200, 40)}):Play()
+    else
+        toggleBtn.Text = "Toggle Speed: OFF"
+        TweenService:Create(toggleBtn, TweenInfo.new(0.3), {BackgroundColor3 = accentRed}):Play()
+    end
+end)
+
+-- Dragging Logic
+local dragging, dragInput, dragStart, startPos
+topBar.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = true
+        dragStart = input.Position
+        startPos = mainFrame.Position
+        
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
+end)
+
+topBar.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+        dragInput = input
+    end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+    if input == dragInput and dragging then
+        local delta = input.Position - dragStart
+        mainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    end
+end)
+
+-- Core CFrame Logic
+RunService.RenderStepped:Connect(function(deltaTime)
+    if not isToggled or speedValue <= 0 then return end
+    
+    local character = player.Character
+    if not character then return end
+    
+    local humanoid = character:FindFirstChildOfClass("Humanoid")
+    local hrp = character:FindFirstChild("HumanoidRootPart")
+    
+    if humanoid and hrp and humanoid.Health > 0 then
+        if humanoid.MoveDirection.Magnitude > 0 then
+            hrp.CFrame = hrp.CFrame + (humanoid.MoveDirection * (speedValue * deltaTime))
+        end
+    end
+end)
