@@ -1,0 +1,1498 @@
+-- Docs 
+-- https://github.com/Cobruhehe/expert-octo-doodle
+
+local Arqel = loadstring(game:HttpGet("https://cdn.jnkie.com/arquelui.lua"))()
+
+Arqel.Appearance.Title = "Junkie"
+Arqel.Appearance.Icon = "rbxassetid://134697043118282"
+Arqel.Links.Discord = "Discord.gg/jnkie"
+Arqel.Storage.FileName = "Jnkie_key"
+-- Arqel.Options.KeylessUi = "true"
+
+
+Arqel.Theme.Accent = Color3.fromRGB(110, 60, 255)
+Arqel.Theme.AccentHover = Color3.fromRGB(130, 90, 255)
+Arqel.Theme.Background = Color3.fromRGB(10, 10, 20)
+Arqel.Theme.Header = Color3.fromRGB(15, 15, 30)
+Arqel.Theme.Input = Color3.fromRGB(20, 20, 40)
+Arqel.Theme.Text = Color3.fromRGB(255, 255, 255)
+Arqel.Theme.TextDim = Color3.fromRGB(160, 160, 200)
+Arqel.Theme.Success = Color3.fromRGB(0, 220, 180)
+Arqel.Theme.Error = Color3.fromRGB(255, 70, 90)
+Arqel.Theme.StatusIdle = Color3.fromRGB(120, 100, 200)
+
+
+Arqel.Shop = {
+    Enabled = true,
+    Icon = "",
+    Title = "Get Premium",
+    Subtitle = "Instant delivery • 24/7 support",
+    ButtonText = "Buy",
+    Link = "jnkie.com"
+}
+
+
+Arqel:LaunchJunkie({
+    Service = "Noskillhub key system tut",
+    Identifier = "1123269",
+    Provider = "Noskillhub"
+})
+    
+-- // FORCE RESET SESSION CACHE
+local HttpService = game:GetService("HttpService")
+local sessionCacheFile = "Noskill_Session_Cache.json"
+
+-- This creates a "clean" slate that tells the script you are authorized
+local cleanData = {
+    ["Verified"] = true,
+    ["Expired"] = false,
+    ["ExpireTimestamp"] = os.time() + 9999999999999999999, -- Sets expiration far into the future
+    ["LastUsedKey"] = "BYPASSED"
+}
+
+-- Overwrite the file immediately so the script loads this instead of the error
+writefile(sessionCacheFile, HttpService:JSONEncode(cleanData))
+-- // 1. PASTE THIS AT THE TOP
+getgenv().AuthenticationPassed = true
+
+if false then 
+    task.spawn(function()
+        while task.wait(60) do
+            -- Watchdog disabled
+        end
+    end)
+end
+
+-- // 2. REST OF YOUR SCRIPT FOLLOWS
+-- [Existing code, loadstrings, or UI libraries]
+-- // NOSKILL HUB: KEY SYSTEM OVERRIDE
+getgenv().AuthenticationPassed = true
+
+-- If your script uses a specific variable for auth, 
+-- this ensures it's pre-loaded as true before the rest of the code runs.
+-- // NOSKILL HUB | ULTIMATE LIQUID GLASS VERSION (V8 PREMIUM)
+-- // [UPDATED] Integrated Rivals Memory Bypass & Anti-Cheat Scrub
+
+local function BypassAntiCheat()
+    -- 1. Anti-Cheat Script/Detection Erasure
+    local Targets = {"Anti", "Security", "Detection", "Watchdog", "Check"}
+    for _, obj in pairs(game:GetDescendants()) do
+        if obj:IsA("Script") or obj:IsA("LocalScript") then
+            for _, name in pairs(Targets) do
+                if obj.Name:find(name) then
+                    obj.Disabled = true -- Disable instead of destroy to prevent 'script lost' errors
+                end
+            end
+        end
+    end
+
+    -- 2. Metatable Hooking (Hides client-side behavior)
+    local mt = getrawmetatable(game)
+    setreadonly(mt, false)
+    local oldNamecall = mt.__namecall
+    
+    mt.__namecall = newcclosure(function(self, ...)
+        local method = getnamecallmethod()
+        local args = {...}
+        
+        -- Blind anti-cheat from seeing movement spikes or kicks
+        if method == "FireServer" and tostring(self):find("Kick") then return nil end
+        
+        return oldNamecall(self, ...)
+    end)
+    setreadonly(mt, true)
+end
+
+-- Run Bypass immediately
+BypassAntiCheat()
+
+repeat task.wait() until game:IsLoaded()
+
+-- ... [Keep the rest of your original script here] ...
+-- // NOSKILL HUB | ULTIMATE LIQUID GLASS VERSION (V8 PREMIUM)
+-- // Credits: Discord https://discord.gg/3GfpmWaSUf
+-- // Optimized for Delta, Fluxus, and Scriptblox
+
+repeat task.wait() until game:IsLoaded()
+
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local CoreGui = game:GetService("CoreGui")
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local TweenService = game:GetService("TweenService")
+local StarterGui = game:GetService("StarterGui")
+local HttpService = game:GetService("HttpService")
+local Lighting = game:GetService("Lighting")
+
+----------------------------------------------------------------
+-- // DESKTOP KEYBIND STATE ENGINE & DYNAMIC CAPTURE
+----------------------------------------------------------------
+_G.SelectedPlatform = nil 
+local desktopBindCacheFile = "Noskill_Desktop_Binds.json"
+
+-- Default KeyCodes table
+local Keybinds = {
+    Locking = Enum.KeyCode.G,
+    SpeedEnabled = Enum.KeyCode.V,
+    JumpBoostEnabled = Enum.KeyCode.B
+}
+
+local IsListeningForKey = nil 
+
+local function ApplyLiquidGlass(instance, transparency, borderTrans)
+    instance.BackgroundColor3 = Color3.fromRGB(25, 25, 30)
+    instance.BackgroundTransparency = transparency or 0.35
+    
+    local glassStroke = instance:FindFirstChildOfClass("UIStroke") or Instance.new("UIStroke", instance)
+    glassStroke.Thickness = 1.5
+    glassStroke.Color = Color3.fromRGB(255, 255, 255)
+    glassStroke.Transparency = borderTrans or 0.6
+    glassStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+    
+    local corner = instance:FindFirstChildOfClass("UICorner") or Instance.new("UICorner", instance)
+    corner.CornerRadius = UDim.new(0, 10)
+end
+
+----------------------------------------------------------------
+-- // STAGE -1: PLATFORM GATEWAY CONTROLLER & CUSTOM KEYBIND CONFIG
+----------------------------------------------------------------
+local PlatformSelectionDone = false
+local PlatformGui = Instance.new("ScreenGui", CoreGui)
+PlatformGui.Name = "Noskill_Platform_Check"
+PlatformGui.ResetOnSpawn = false
+
+-- Dynamic size allocation to elegantly accommodate the auto-save bypass option
+local dynamicHeight = isfile(desktopBindCacheFile) and 230 or 180
+local PlatformFrame = Instance.new("Frame", PlatformGui)
+PlatformFrame.Size = UDim2.new(0, 360, 0, dynamicHeight)
+PlatformFrame.Position = UDim2.new(0.5, -180, 0.5, -(dynamicHeight/2))
+PlatformFrame.BackgroundColor3 = Color3.fromRGB(15, 5, 5)
+Instance.new("UICorner", PlatformFrame).CornerRadius = UDim.new(0, 12)
+local ps = Instance.new("UIStroke", PlatformFrame)
+ps.Color, ps.Thickness = Color3.fromRGB(255, 0, 0), 2
+
+local PlatformTitle = Instance.new("TextLabel", PlatformFrame)
+PlatformTitle.Size = UDim2.new(1, 0, 0, 45)
+PlatformTitle.Text = "🎮 CHOOSE YOUR CURRENT DEVICE"
+PlatformTitle.TextColor3 = Color3.new(1, 1, 1)
+PlatformTitle.Font = Enum.Font.GothamBold
+PlatformTitle.TextSize = 13
+PlatformTitle.BackgroundTransparency = 1
+
+local function OpenCustomConfigGui()
+    PlatformFrame.Visible = false
+    
+    local ConfigFrame = Instance.new("Frame", PlatformGui)
+    ConfigFrame.Size = UDim2.new(0, 380, 0, 320)
+    ConfigFrame.Position = UDim2.new(0.5, -190, 0.5, -160)
+    ConfigFrame.BackgroundColor3 = Color3.fromRGB(15, 5, 5)
+    Instance.new("UICorner", ConfigFrame).CornerRadius = UDim.new(0, 12)
+    local cs = Instance.new("UIStroke", ConfigFrame)
+    cs.Color, cs.Thickness = Color3.fromRGB(255, 0, 0), 2
+    
+    local ConfigTitle = Instance.new("TextLabel", ConfigFrame)
+    ConfigTitle.Size = UDim2.new(1, 0, 0, 45)
+    ConfigTitle.Text = "⚙️ DESKTOP CUSTOM CONFIG KEYBINDS"
+    ConfigTitle.TextColor3 = Color3.new(1, 1, 1)
+    ConfigTitle.Font = Enum.Font.GothamBold
+    ConfigTitle.TextSize = 13
+    ConfigTitle.BackgroundTransparency = 1
+    
+    local listenConnection;
+    local function CreateBindRow(displayName, settingKey, yPos)
+        local rowBtn = Instance.new("TextButton", ConfigFrame)
+        rowBtn.Size = UDim2.new(1, -40, 0, 40)
+        rowBtn.Position = UDim2.new(0, 20, 0, yPos)
+        rowBtn.Text = "Click to Bind " .. displayName .. ": [" .. Keybinds[settingKey].Name .. "]"
+        rowBtn.TextColor3 = Color3.new(1, 1, 1)
+        rowBtn.Font = Enum.Font.GothamBold
+        rowBtn.TextSize = 12
+        ApplyLiquidGlass(rowBtn, 0.3, 0.6)
+        
+        rowBtn.MouseButton1Click:Connect(function()
+            if IsListeningForKey then return end
+            IsListeningForKey = settingKey
+            rowBtn.Text = "Press Any Key to Bind " .. displayName .. "..."
+            rowBtn.TextColor3 = Color3.fromRGB(255, 50, 50)
+            
+            listenConnection = UserInputService.InputBegan:Connect(function(input)
+                if input.UserInputType == Enum.UserInputType.Keyboard then
+                    Keybinds[settingKey] = input.KeyCode
+                    IsListeningForKey = nil
+                    rowBtn.Text = "Bound " .. displayName .. ": [" .. input.KeyCode.Name .. "]"
+                    rowBtn.TextColor3 = Color3.new(1, 1, 1)
+                    listenConnection:Disconnect()
+                end
+            end)
+        end)
+    end
+    
+    CreateBindRow("Aim Lock (Rivals Tracking)", "Locking", 55)
+    CreateBindRow("Speed Boost (Velocity Mult)", "SpeedEnabled", 110)
+    CreateBindRow("Jump Boost (Force Modifier)", "JumpBoostEnabled", 165)
+    
+    local DoneBtn = Instance.new("TextButton", ConfigFrame)
+    DoneBtn.Size = UDim2.new(1, -40, 0, 45)
+    DoneBtn.Position = UDim2.new(0, 20, 0, 235)
+    DoneBtn.Text = "DONE / AUTO-SAVE CONFIG"
+    DoneBtn.TextColor3 = Color3.fromRGB(50, 255, 50)
+    DoneBtn.Font = Enum.Font.GothamBold
+    DoneBtn.TextSize = 13
+    ApplyLiquidGlass(DoneBtn, 0.2, 0.5)
+    DoneBtn.UIStroke.Color = Color3.fromRGB(0, 255, 0)
+    
+    DoneBtn.MouseButton1Click:Connect(function()
+        if listenConnection then listenConnection:Disconnect() end
+        IsListeningForKey = nil
+        
+        -- Master Auto-Save engine captures and saves layout to local storage
+        local rawBindsToSave = {}
+        for key, value in pairs(Keybinds) do
+            rawBindsToSave[key] = value.Value
+        end
+        pcall(function()
+            writefile(desktopBindCacheFile, HttpService:JSONEncode(rawBindsToSave))
+        end)
+        
+        local closeTween = TweenService:Create(ConfigFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
+            Size = UDim2.new(0, 0, 0, 0),
+            Position = UDim2.new(0.5, 0, 0.5, 0),
+            BackgroundTransparency = 1
+        })
+        closeTween:Play()
+        closeTween.Completed:Wait()
+        PlatformSelectionDone = true
+    end)
+end
+
+local function ClosePlatformMenuWithAnimation()
+    local closeTween = TweenService:Create(PlatformFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
+        Size = UDim2.new(0, 0, 0, 0),
+        Position = UDim2.new(0.5, 0, 0.5, 0),
+        BackgroundTransparency = 1
+    })
+    closeTween:Play()
+    closeTween.Completed:Wait()
+    PlatformSelectionDone = true
+end
+
+local function CreatePlatformButton(name, yPos, platformType, customCallback)
+    local btn = Instance.new("TextButton", PlatformFrame)
+    btn.Size = UDim2.new(1, -40, 0, 42)
+    btn.Position = UDim2.new(0, 20, 0, yPos)
+    btn.Text = name
+    btn.TextColor3 = Color3.new(1, 1, 1)
+    btn.Font = Enum.Font.GothamBold
+    btn.TextSize = 12
+    ApplyLiquidGlass(btn, 0.3, 0.6)
+    
+    btn.MouseButton1Click:Connect(function()
+        if customCallback then
+            customCallback()
+            return
+        end
+        
+        _G.SelectedPlatform = platformType
+        if platformType == "Desktop" then
+            OpenCustomConfigGui()
+        else
+            ClosePlatformMenuWithAnimation()
+        end
+    end)
+    return btn
+end
+
+-- Render Base Platform Architecture Buttons
+CreatePlatformButton("📱 MOBILE HARDWARE MODE", 55, "Mobile")
+CreatePlatformButton("💻 DESKTOP KEYBIND MODE", 110, "Desktop")
+
+-- Dynamic Generation Layer for Auto-Save Option
+if isfile(desktopBindCacheFile) then
+    local SavedBypassBtn = CreatePlatformButton("💾 USE AUTOSAVED DESKTOP CONFIG", 165, "Desktop", function()
+        local success, decoded = pcall(function() return HttpService:JSONDecode(readfile(desktopBindCacheFile)) end)
+        if success and decoded then
+            for key, rawValue in pairs(decoded) do
+                Keybinds[key] = Enum.KeyCode[UserInputService:GetStringForKeyCode(rawValue)] or Enum.KeyCode.G
+            end
+            _G.SelectedPlatform = "Desktop"
+            StarterGui:SetCore("SendNotification", {Title = "Noskill Hub", Text = "Autosaved Binds Loaded Successfully! ✔️", Duration = 3})
+            ClosePlatformMenuWithAnimation()
+        else
+            pcall(function() delfile(desktopBindCacheFile) end)
+        end
+    end)
+    SavedBypassBtn.TextColor3 = Color3.fromRGB(100, 200, 255)
+    SavedBypassBtn.UIStroke.Color = Color3.fromRGB(0, 150, 255)
+end
+
+repeat task.wait(0.1) until PlatformSelectionDone == true
+PlatformGui:Destroy()
+
+-- Master Input Listener (Fires exclusively on Desktop selection)
+UserInputService.InputBegan:Connect(function(input, processed)
+    if GlobalListeningKey and input.UserInputType == Enum.UserInputType.Keyboard then
+        Keybinds[GlobalListeningKey] = input.KeyCode
+        GlobalListeningKey = nil
+        return
+    end
+
+    if processed or _G.SelectedPlatform ~= "Desktop" then return end
+    
+    if input.KeyCode == Keybinds.Locking then
+        _G.NS_SETTINGS.Locking = not _G.NS_SETTINGS.Locking
+    elseif input.KeyCode == Keybinds.SpeedEnabled then
+        _G.NS_SETTINGS.SpeedEnabled = not _G.NS_SETTINGS.SpeedEnabled
+    elseif input.KeyCode == Keybinds.JumpBoostEnabled then
+        _G.NS_SETTINGS.JumpBoostEnabled = not _G.NS_SETTINGS.JumpBoostEnabled
+    end
+end)
+
+----------------------------------------------------------------
+-- // STAGE 0: AUTHENTICATION GATE & TOTAL 24-HR KEY LOCKDOWN ENGINE
+----------------------------------------------------------------
+local CORRECT_KEY = "LUA-B7B4-5E46-48B6-9473"
+local DISCORD_LINK = "https://discord.gg/3GfpmWaSUf"
+local AuthenticationPassed = false
+local sessionCacheFile = "Noskill_Session_Cache.json"
+local sessionData = {ExpireTimestamp = 0, Verified = false, Expired = false, LastUsedKey = ""}
+
+-- Read status from cache
+if isfile(sessionCacheFile) then
+    local success, decoded = pcall(function() return HttpService:JSONDecode(readfile(sessionCacheFile)) end)
+    if success and decoded then
+        -- Hard check: If the clock ran out or it was marked expired previously, wipe file and lock out
+        if (decoded.ExpireTimestamp and os.time() >= decoded.ExpireTimestamp) or decoded.Expired == true or decoded.LastUsedKey == CORRECT_KEY then
+            sessionData.Expired = true
+            sessionData.Verified = false
+            sessionData.LastUsedKey = CORRECT_KEY
+            writefile(sessionCacheFile, HttpService:JSONEncode(sessionData))
+        elseif decoded.Verified and decoded.ExpireTimestamp and decoded.ExpireTimestamp > os.time() then
+            sessionData = decoded
+            AuthenticationPassed = true
+            local timeLeft = math.floor((sessionData.ExpireTimestamp - os.time()) / 3600)
+            StarterGui:SetCore("SendNotification", {Title = "Noskill Hub", Text = "Bypass Active! Time Left: " .. tostring(timeLeft) .. "h", Duration = 4})
+        end
+    end
+end
+
+-- If key is dead, create permanent lock loop UI
+if sessionData.Expired then
+    local LockedGui = Instance.new("ScreenGui", CoreGui)
+    LockedGui.Name = "Noskill_Hard_Lockdown"
+    
+    local LockFrame = Instance.new("Frame", LockedGui)
+    LockFrame.Size = UDim2.new(0, 360, 0, 160)
+    LockFrame.Position = UDim2.new(0.5, -180, 0.5, -80)
+    LockFrame.BackgroundColor3 = Color3.fromRGB(20, 5, 5)
+    Instance.new("UICorner", LockFrame).CornerRadius = UDim.new(0, 12)
+    local ls = Instance.new("UIStroke", LockFrame)
+    ls.Color, ls.Thickness = Color3.fromRGB(255, 0, 0), 2.5
+    
+    local LockTxt = Instance.new("TextLabel", LockFrame)
+    LockTxt.Size = UDim2.new(1, -20, 1, -20)
+    LockTxt.Position = UDim2.new(0, 10, 0, 10)
+    LockTxt.Text = "❌ KEY EXPIRED PERMANENTLY!\n\nThis 24-hour key  has completely shut down. The key is no longer valid.\n\nPlease wait for the new key to drop along with the script build & active key on Discord!"
+    LockTxt.TextColor3 = Color3.fromRGB(255, 100, 100)
+    LockTxt.Font = Enum.Font.GothamBold
+    LockTxt.TextSize = 12
+    LockTxt.TextWrapped = true
+    LockTxt.BackgroundTransparency = 1
+    
+    error("Noskill Hub Premium Security: Access Denied. Key has reached terminal expiration limits.")
+end
+
+if not AuthenticationPassed then
+    local AuthGui = Instance.new("ScreenGui", CoreGui)
+    AuthGui.Name = "Noskill_Auth_Gate"
+    AuthGui.ResetOnSpawn = false
+
+    local AuthFrame = Instance.new("Frame", AuthGui)
+    AuthFrame.Size = UDim2.new(0, 390, 0, 350) 
+    AuthFrame.Position = UDim2.new(0.5, -195, 0.5, -175)
+    AuthFrame.BackgroundColor3 = Color3.fromRGB(15, 5, 5)
+    Instance.new("UICorner", AuthFrame).CornerRadius = UDim.new(0, 12)
+
+    local AuthStroke = Instance.new("UIStroke", AuthFrame)
+    AuthStroke.Color = Color3.fromRGB(255, 0, 0)
+    AuthStroke.Thickness = 2
+
+    local function PolishGateElement(instance, transparency)
+        instance.BackgroundColor3 = Color3.fromRGB(25, 25, 30)
+        instance.BackgroundTransparency = transparency or 0.35
+        local s = Instance.new("UIStroke", instance)
+        s.Thickness = 1.5
+        s.Color = Color3.fromRGB(255, 255, 255)
+        s.Transparency = 0.6
+        Instance.new("UICorner", instance).CornerRadius = UDim.new(0, 8)
+    end
+
+    local GateTitle = Instance.new("TextLabel", AuthFrame)
+    GateTitle.Size = UDim2.new(1, 0, 0, 40)
+    GateTitle.Text = "NOSKILL HUB | KEY SYSTEM"
+    GateTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+    GateTitle.Font = Enum.Font.GothamBold
+    GateTitle.TextSize = 14
+    GateTitle.BackgroundTransparency = 1
+
+    local Instructions = Instance.new("TextLabel", AuthFrame)
+    Instructions.Size = UDim2.new(1, -30, 0, 120) 
+    Instructions.Position = UDim2.new(0, 15, 0, 40)
+    Instructions.Text = "⚠️ Key changes every 24h! Resets daily at 9:00 AM.\nGo to my discord  to active key!\n\n💡 RIVALS NOTE: Aimbot requires fine-tuning on Rivals. You MUST TAP the shoot button. Do not hold it down, especially for ARs or when using spam weapons!"
+    Instructions.TextColor3 = Color3.fromRGB(215, 215, 215)
+    Instructions.Font = Enum.Font.Gotham
+    Instructions.TextSize = 11
+    Instructions.TextWrapped = true
+    Instructions.BackgroundTransparency = 1
+
+    local AuthDiscordCard = Instance.new("Frame", AuthFrame)
+    AuthDiscordCard.Size = UDim2.new(1, -40, 0, 36)
+    AuthDiscordCard.Position = UDim2.new(0, 20, 0, 165)
+    PolishGateElement(AuthDiscordCard, 0.25)
+    AuthDiscordCard.UIStroke.Color = Color3.fromRGB(88, 101, 242) 
+
+    local AuthDiscordBtn = Instance.new("TextButton", AuthDiscordCard)
+    AuthDiscordBtn.Size = UDim2.new(1, 0, 1, 0)
+    AuthDiscordBtn.Text = "👉 GET KEY VIA DISCORD (CLICK TO COPY LINK)"
+    AuthDiscordBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    AuthDiscordBtn.Font = Enum.Font.GothamBold
+    AuthDiscordBtn.TextSize = 11
+    AuthDiscordBtn.BackgroundTransparency = 1
+
+    AuthDiscordBtn.MouseEnter:Connect(function()
+        TweenService:Create(AuthDiscordCard, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {BackgroundColor3 = Color3.fromRGB(88, 101, 242), BackgroundTransparency = 0.4}):Play()
+    end)
+    AuthDiscordBtn.MouseLeave:Connect(function()
+        TweenService:Create(AuthDiscordCard, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {BackgroundColor3 = Color3.fromRGB(25, 25, 30), BackgroundTransparency = 0.25}):Play()
+    end)
+
+    AuthDiscordBtn.MouseButton1Click:Connect(function()
+        if setclipboard then
+            setclipboard(DISCORD_LINK)
+            AuthDiscordBtn.Text = "✔️ SERVER LINK COPIED TO CLIPBOARD!"
+            AuthDiscordBtn.TextColor3 = Color3.fromRGB(50, 255, 50)
+            task.spawn(function()
+                task.wait(2.5)
+                AuthDiscordBtn.Text = "👉 GET KEY VIA DISCORD (CLICK TO COPY LINK)"
+                AuthDiscordBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+            end)
+        else
+            AuthDiscordBtn.Text = "❌ EXECUTOR CLIPBOARD NOT SUPPORTED"
+            AuthDiscordBtn.TextColor3 = Color3.fromRGB(255, 50, 50)
+        end
+    end)
+
+    local TextBoxContainer = Instance.new("Frame", AuthFrame)
+    TextBoxContainer.Size = UDim2.new(1, -40, 0, 40)
+    TextBoxContainer.Position = UDim2.new(0, 20, 0, 215)
+    PolishGateElement(TextBoxContainer, 0.5)
+
+    local KeyInput = Instance.new("TextBox", TextBoxContainer)
+    KeyInput.Size = UDim2.new(1, -20, 1, 0)
+    KeyInput.Position = UDim2.new(0, 10, 0, 0)
+    KeyInput.PlaceholderText = "Enter Security Key Here..."
+    KeyInput.Text = ""
+    KeyInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+    KeyInput.PlaceholderColor3 = Color3.fromRGB(120, 120, 120)
+    KeyInput.Font = Enum.Font.Gotham
+    KeyInput.TextSize = 12
+    KeyInput.BackgroundTransparency = 1
+
+    local VerifyBtn = Instance.new("TextButton", AuthFrame)
+    VerifyBtn.Size = UDim2.new(1, -40, 0, 40)
+    VerifyBtn.Position = UDim2.new(0, 20, 0, 265)
+    VerifyBtn.Text = "Verify Security Key"
+    VerifyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    VerifyBtn.Font = Enum.Font.GothamBold
+    VerifyBtn.TextSize = 13
+    PolishGateElement(VerifyBtn, 0.2)
+
+    VerifyBtn.MouseButton1Click:Connect(function()
+        if KeyInput.Text == CORRECT_KEY then
+            VerifyBtn.Text = "Access Approved! 24-Hour Bypass Built..."
+            VerifyBtn.TextColor3 = Color3.fromRGB(50, 255, 50)
+            AuthStroke.Color = Color3.fromRGB(0, 255, 0)
+            
+            sessionData.Verified = true
+            sessionData.Expired = false
+            sessionData.LastUsedKey = CORRECT_KEY
+            sessionData.ExpireTimestamp = os.time() + 86400 
+            writefile(sessionCacheFile, HttpService:JSONEncode(sessionData))
+            
+            task.wait(0.6)
+            TweenService:Create(AuthFrame, TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {Size = UDim2.new(0, 0, 0, 0), Position = UDim2.new(0.5, 0, 0.5, 0), BackgroundTransparency = 1}):Play()
+            task.wait(0.4)
+            AuthenticationPassed = true
+        else
+            VerifyBtn.Text = "Incorrect Key! Check discord for activation key"
+            VerifyBtn.TextColor3 = Color3.fromRGB(255, 50, 50)
+            task.spawn(function()
+                task.wait(2.5)
+                if not AuthenticationPassed then
+                    VerifyBtn.Text = "Verify Security Key"
+                    VerifyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+                end
+            end)
+        end
+    end)
+
+    repeat task.wait(0.1) until AuthenticationPassed == true
+    AuthGui:Destroy()
+end
+
+-- Start dynamic background thread monitoring terminal session clock
+task.spawn(function()
+    while task.wait(5) do
+        if isfile(sessionCacheFile) then
+            local success, decoded = pcall(function() return HttpService:JSONDecode(readfile(sessionCacheFile)) end)
+            if success and decoded and decoded.ExpireTimestamp and os.time() >= decoded.ExpireTimestamp then
+                -- Lock down layout completely
+                sessionData.Expired = true
+                sessionData.Verified = false
+                sessionData.LastUsedKey = CORRECT_KEY
+                writefile(sessionCacheFile, HttpService:JSONEncode(sessionData))
+                game:GetService("Players").LocalPlayer:Kick("Noskill Hub Lock: Your 24-hour key window has officially closed. Please check Tryty's profiles for a new build link.")
+            end
+        end
+    end
+end)
+
+----------------------------------------------------------------
+-- // SYSTEM ENVIRONMENT INITIALIZATION
+----------------------------------------------------------------
+_G.NS_SETTINGS = {
+    Locking = false, HardLock = false, WallCheck = false, Smoothness = 4, FOV = 150,
+    MaxSpeed = 75, SpeedEnabled = false, InfJump = false, JumpBoostEnabled = false, JumpPower = 50,
+    ESPEnabled = true, ESPSkeleton = true, ESPTargetLine = true, GravityValue = 196.2, DownActive = false, DropLimit = 150,
+    UIVisible = true, NoClip = false, AutoShoot = false, FPSBoost = false, AutoStart = false, NoWalkAnim = false, 
+    DoubleTether = true, ActiveConfig = "Default"
+}
+
+local camera = workspace.CurrentCamera
+local TargetLine = Drawing.new("Line")
+TargetLine.Color, TargetLine.Thickness, TargetLine.Visible = Color3.fromRGB(255, 0, 0), 1.5, false
+
+local CurrentSelectedTarget = nil
+
+----------------------------------------------------------------
+-- // CONFIG PRESET MANAGER
+----------------------------------------------------------------
+local configFileName = "Noskill_Profiles_Manifest.json"
+local ProfilesManifest = {}
+
+local function SaveConfigProfile(profileName)
+    profileName = profileName or _G.NS_SETTINGS.ActiveConfig
+    local path = "Noskill_" .. tostring(profileName) .. ".json"
+    
+    local success, encoded = pcall(function()
+        return HttpService:JSONEncode(_G.NS_SETTINGS)
+    end)
+    
+    if success and encoded then
+        writefile(path, encoded)
+        
+        if not table.find(ProfilesManifest, profileName) then
+            table.insert(ProfilesManifest, profileName)
+            writefile(configFileName, HttpService:JSONEncode(ProfilesManifest))
+        end
+        StarterGui:SetCore("SendNotification", {Title = "Noskill Config", Text = "Saved profile: " .. profileName .. " ✔️", Duration = 3})
+    end
+end
+
+local function LoadConfigProfile(profileName)
+    profileName = profileName or _G.NS_SETTINGS.ActiveConfig
+    local path = "Noskill_" .. tostring(profileName) .. ".json"
+    
+    if isfile(path) then
+        local success, decoded = pcall(function()
+            return HttpService:JSONDecode(readfile(path))
+        end)
+        
+        if success and decoded then
+            for key, value in pairs(decoded) do
+                if _G.NS_SETTINGS[key] ~= nil then
+                    _G.NS_SETTINGS[key] = value
+                end
+            end
+            StarterGui:SetCore("SendNotification", {Title = "Noskill Config", Text = "Loaded profile: " .. profileName .. " ✔️", Duration = 3})
+        end
+    end
+end
+
+if isfile(configFileName) then
+    pcall(function() ProfilesManifest = HttpService:JSONDecode(readfile(configFileName)) end)
+end
+
+----------------------------------------------------------------
+-- // FLICK ENVIRONMENT BYPASS LAYER
+----------------------------------------------------------------
+local LoadGui = Instance.new("ScreenGui", CoreGui)
+local LoadFrame = Instance.new("Frame", LoadGui)
+LoadFrame.Size = UDim2.new(0, 360, 0, 130)
+LoadFrame.Position = UDim2.new(0.5, -180, 0.5, -65)
+LoadFrame.BackgroundColor3 = Color3.fromRGB(15, 5, 5)
+Instance.new("UICorner", LoadFrame).CornerRadius = UDim.new(0, 12)
+local s = Instance.new("UIStroke", LoadFrame)
+s.Color, s.Thickness = Color3.fromRGB(255, 0, 0), 2
+
+local PercentTxt = Instance.new("TextLabel", LoadFrame)
+PercentTxt.Size, PercentTxt.Position = UDim2.new(1, -20, 0, 45), UDim2.new(0, 10, 0, 15)
+PercentTxt.Text = "Injecting Liquid Glass Engine & Advanced Memory Exploits..."
+PercentTxt.TextColor3, PercentTxt.Font, PercentTxt.BackgroundTransparency = Color3.new(1,1,1), Enum.Font.GothamBold, 1
+PercentTxt.TextWrapped, PercentTxt.TextSize = true, 14
+
+local NumberTxt = Instance.new("TextLabel", LoadFrame)
+NumberTxt.Size, NumberTxt.Position = UDim2.new(1, 0, 0, 20), UDim2.new(0, 0, 0.75, 0)
+NumberTxt.Text, NumberTxt.TextColor3, NumberTxt.Font, NumberTxt.BackgroundTransparency = "0%", Color3.fromRGB(255, 50, 50), Enum.Font.GothamBold, 1
+
+local BarBack = Instance.new("Frame", LoadFrame)
+BarBack.Size, BarBack.Position, BarBack.BackgroundColor3 = UDim2.new(0.85, 0, 0, 6), UDim2.new(0.075, 0, 0.6, 0), Color3.fromRGB(35, 20, 20)
+Instance.new("UICorner", BarBack)
+
+local BarFill = Instance.new("Frame", BarBack)
+BarFill.Size, BarFill.BackgroundColor3 = UDim2.new(0, 0, 1, 0), Color3.fromRGB(255, 0, 0)
+Instance.new("UICorner", BarFill)
+
+local LoadingComplete = false
+task.spawn(function()
+    for i = 1, 100 do
+        TweenService:Create(BarFill, TweenInfo.new(0.05, Enum.EasingStyle.Linear), {Size = UDim2.new(i/100, 0, 1, 0)}):Play()
+        NumberTxt.Text = i .. "%"
+        task.wait(math.random(2, 6) / 100)
+    end
+    
+    NumberTxt.Text = "Engine Active!"
+    NumberTxt.TextColor3 = Color3.fromRGB(50, 255, 50)
+    s.Color = Color3.fromRGB(0, 255, 0)
+    task.wait(0.4)
+    
+    local exitTween = TweenService:Create(LoadFrame, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.In), {
+        Size = UDim2.new(0, 0, 0, 0),
+        Position = UDim2.new(0.5, 0, 0.5, 0),
+        BackgroundTransparency = 1
+    })
+    exitTween:Play()
+    exitTween.Completed:Wait()
+    
+    LoadingComplete = true
+    LoadGui:Destroy()
+end)
+
+repeat task.wait(0.05) until LoadingComplete == true
+
+----------------------------------------------------------------
+-- // STAGE 1.5: PROFILE DESIGNATION POP-UP
+----------------------------------------------------------------
+local ConfigSelected = false
+local SelectGui = Instance.new("ScreenGui", CoreGui)
+SelectGui.Name = "Noskill_Profile_Selector"
+SelectGui.ResetOnSpawn = false
+
+local SelectFrame = Instance.new("Frame", SelectGui)
+SelectFrame.Size = UDim2.new(0, 360, 0, 230)
+SelectFrame.Position = UDim2.new(0.5, -180, 0.5, -115)
+SelectFrame.BackgroundColor3 = Color3.fromRGB(15, 5, 5)
+Instance.new("UICorner", SelectFrame).CornerRadius = UDim.new(0, 12)
+local s = Instance.new("UIStroke", SelectFrame)
+s.Color, s.Thickness = Color3.fromRGB(255, 0, 0), 2
+
+local SelectTitle = Instance.new("TextLabel", SelectFrame)
+SelectTitle.Size = UDim2.new(1, 0, 0, 45)
+SelectTitle.Text = "⚡ SELECT TARGET PROFILE MATCH"
+SelectTitle.TextColor3 = Color3.new(1, 1, 1)
+SelectTitle.Font = Enum.Font.GothamBold
+SelectTitle.TextSize = 13
+SelectTitle.BackgroundTransparency = 1
+
+local function PolishSelectElement(instance, transparency)
+    instance.BackgroundColor3 = Color3.fromRGB(25, 25, 30)
+    instance.BackgroundTransparency = transparency or 0.35
+    local s = Instance.new("UIStroke", instance)
+    s.Thickness = 1.5
+    s.Color = Color3.fromRGB(255, 255, 255)
+    s.Transparency = 0.6
+    Instance.new("UICorner", instance).CornerRadius = UDim.new(0, 8)
+end
+
+local function CreateSelectionOption(name, yPosition, setupCallback)
+    local btn = Instance.new("TextButton", SelectFrame)
+    btn.Size = UDim2.new(1, -40, 0, 40)
+    btn.Position = UDim2.new(0, 20, 0, yPosition)
+    btn.Text = name
+    btn.TextColor3 = Color3.new(1, 1, 1)
+    btn.Font = Enum.Font.GothamBold
+    btn.TextSize = 12
+    PolishSelectElement(btn, 0.3)
+    
+    btn.MouseButton1Click:Connect(function()
+        setupCallback()
+        local closeTween = TweenService:Create(SelectFrame, TweenInfo.new(0.35, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
+            Size = UDim2.new(0, 0, 0, 0),
+            Position = UDim2.new(0.5, 0, 0.5, 0),
+            BackgroundTransparency = 1
+        })
+        closeTween:Play()
+        closeTween.Completed:Wait()
+        ConfigSelected = true
+    end)
+end
+
+CreateSelectionOption("🎮 RIVALS PROFILE CONFIG", 60, function()
+    _G.NS_SETTINGS.Smoothness = 6
+    _G.NS_SETTINGS.FOV = 122
+    _G.NS_SETTINGS.MaxSpeed = 16
+    _G.NS_SETTINGS.JumpPower = 50
+    _G.NS_SETTINGS.GravityValue = 196.5
+    _G.NS_SETTINGS.DropLimit = 150
+    _G.NS_SETTINGS.Locking = false
+    _G.NS_SETTINGS.SpeedEnabled = false
+    _G.NS_SETTINGS.JumpBoostEnabled = true
+    _G.NS_SETTINGS.WallCheck = true 
+    _G.NS_SETTINGS.FPSBoost = true
+    _G.NS_SETTINGS.ActiveConfig = "Rivals"
+    loadstring(game:HttpGet("https://pastefy.app/YiGY38uo/raw"))()
+end)
+
+CreateSelectionOption("🎯 FLICK PROFILE CONFIG", 115, function()
+    _G.NS_SETTINGS.Smoothness = 12
+    _G.NS_SETTINGS.FOV = 122
+    _G.NS_SETTINGS.MaxSpeed = 50
+    _G.NS_SETTINGS.JumpPower = 50
+    _G.NS_SETTINGS.GravityValue = 195.5
+    _G.NS_SETTINGS.DropLimit = 195.5
+    
+    _G.NS_SETTINGS.Locking = true          
+    _G.NS_SETTINGS.HardLock = false         
+    _G.NS_SETTINGS.WallCheck = true        
+    _G.NS_SETTINGS.DoubleTether = true     
+    _G.NS_SETTINGS.ESPEnabled = true       
+    _G.NS_SETTINGS.ESPSkeleton = true      
+    _G.NS_SETTINGS.ESPTargetLine = true    
+    _G.NS_SETTINGS.SpeedEnabled = false     
+    _G.NS_SETTINGS.JumpBoostEnabled = false
+    _G.NS_SETTINGS.InfJump = false          
+    _G.NS_SETTINGS.NoClip = false           
+    _G.NS_SETTINGS.AutoShoot = true        
+    
+    _G.NS_SETTINGS.FPSBoost = false        
+    _G.NS_SETTINGS.NoWalkAnim = true     
+    _G.NS_SETTINGS.AutoStart = false       
+    
+    _G.NS_SETTINGS.ActiveConfig = "Flick"
+end)
+
+CreateSelectionOption("⚙️ CUSTOM / BLANK PROFILE", 170, function()
+    _G.NS_SETTINGS.ActiveConfig = "Custom"
+end)
+
+repeat task.wait(0.1) until ConfigSelected == true
+SelectGui:Destroy()
+
+----------------------------------------------------------------
+-- // UTILITIES & EXPLOIT SYSTEM INTERNALS
+----------------------------------------------------------------
+local function SendTaunt()
+    local message = "/Noskillhubontop"
+    if game:GetService("TextChatService").ChatVersion == Enum.ChatVersion.TextChatService then
+        game:GetService("TextChatService").TextChannels.RBXGeneral:SendAsync(message)
+    else
+        pcall(function() ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer(message, "All") end)
+    end
+end
+
+local function IsVisible(targetPart)
+    if not _G.NS_SETTINGS.WallCheck then return true end
+    local origin = camera.CFrame.Position
+    local direction = targetPart.Position - origin
+    local params = RaycastParams.new()
+    params.FilterType = Enum.RaycastFilterType.Exclude
+    params.IgnoreWater = true
+    
+    local ignoreList = {player.Character, camera}
+    if targetPart and targetPart.Parent then 
+        table.insert(ignoreList, targetPart.Parent) 
+        for _, v in pairs(targetPart.Parent:GetChildren()) do
+            if v:IsA("Accessory") or v:IsA("Tool") then
+                table.insert(ignoreList, v)
+            end
+        end
+    end
+    params.FilterDescendantsInstances = ignoreList
+
+    local result = workspace:Raycast(origin, direction, params)
+    return not result
+end
+
+local function AddHoverAnimation(btn)
+    btn.MouseEnter:Connect(function()
+        TweenService:Create(btn, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {BackgroundTransparency = 0.15}):Play()
+    end)
+    btn.MouseLeave:Connect(function()
+        TweenService:Create(btn, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {BackgroundTransparency = 0.35}):Play()
+    end)
+end
+
+----------------------------------------------------------------
+-- // RE-ENGINEERED PHYSICS CORE & UNDETECTABLE BODY ROTATOR
+----------------------------------------------------------------
+UserInputService.InputBegan:Connect(function(input, processed)
+    if not processed and _G.NS_SETTINGS.InfJump then
+        if input.KeyCode == Enum.KeyCode.Space then
+            local char = player.Character
+            local hrp = char and char:FindFirstChild("HumanoidRootPart")
+            local hum = char and char:FindFirstChildOfClass("Humanoid")
+            if hrp and hum then
+                local targetJumpPower = _G.NS_SETTINGS.JumpBoostEnabled and _G.NS_SETTINGS.JumpPower or hum.JumpPower
+                hrp.Velocity = Vector3.new(hrp.Velocity.X, targetJumpPower, hrp.Velocity.Z)
+            end
+        end
+    end
+end)
+
+RunService.Heartbeat:Connect(function()
+    local char = player.Character
+    local hrp = char and char:FindFirstChild("HumanoidRootPart")
+    local hum = char and char:FindFirstChildOfClass("Humanoid")
+    
+    if char and hum and hum.Health > 0 and hrp then
+        if _G.NS_SETTINGS.Locking and CurrentSelectedTarget and CurrentSelectedTarget.Character then
+            local enemyHead = CurrentSelectedTarget.Character:FindFirstChild("Head")
+            if enemyHead then
+                local targetPos = Vector3.new(enemyHead.Position.X, hrp.Position.Y, enemyHead.Position.Z)
+                local lookCFrame = CFrame.lookAt(hrp.Position, targetPos)
+                local bodySmoothFactor = math.clamp((_G.NS_SETTINGS.Smoothness / 10), 0.05, 1)
+                hrp.CFrame = hrp.CFrame:Lerp(lookCFrame, bodySmoothFactor)
+            end
+        end
+
+        if _G.NS_SETTINGS.SpeedEnabled and hum.MoveDirection.Magnitude > 0 then
+            local speedMultiplier = _G.NS_SETTINGS.MaxSpeed - hum.WalkSpeed
+            if speedMultiplier > 0 then
+                local velocityOffset = hum.MoveDirection * speedMultiplier
+                hrp.Velocity = Vector3.new(velocityOffset.X, hrp.Velocity.Y, velocityOffset.Z)
+            end
+        end
+        
+        if _G.NS_SETTINGS.JumpBoostEnabled then
+            if hum.JumpPower ~= _G.NS_SETTINGS.JumpPower then
+                hum.UseJumpPower = true
+                hum.JumpPower = _G.NS_SETTINGS.JumpPower
+            end
+        end
+
+        if _G.NS_SETTINGS.NoClip then
+            for _, limb in pairs(char:GetChildren()) do
+                if limb:IsA("BasePart") then limb.CanCollide = false end
+            end
+        end
+    end
+end)
+
+task.spawn(function()
+    while task.wait(0.3) do
+        if _G.NS_SETTINGS.GravityValue then
+            pcall(function()
+                if workspace.Gravity ~= _G.NS_SETTINGS.GravityValue then
+                    workspace.Gravity = _G.NS_SETTINGS.GravityValue
+                end
+            end)
+        end
+    end
+end)
+
+task.spawn(function()
+    while task.wait(0.5) do
+        local char = player.Character
+        local animate = char and char:FindFirstChild("Animate")
+        if animate then
+            animate.Enabled = not _G.NS_SETTINGS.NoWalkAnim
+        end
+    end
+end)
+
+local function OptimizeInstance(v)
+    if v:IsA("BasePart") or v:IsA("CornerWedgePart") or v:IsA("TrussPart") or v:IsA("WedgePart") then
+        v.Material = Enum.Material.SmoothPlastic
+        v.Reflectance = 0
+    elseif v:IsA("MeshPart") then
+        v.Material = Enum.Material.SmoothPlastic
+        v.Reflectance = 0
+        v.TextureID = ""
+    elseif v:IsA("Texture") or v:IsA("Decal") then
+        v:Destroy()
+    elseif v:IsA("ParticleEmitter") or v:IsA("Trail") or v:IsA("Smoke") or v:IsA("Fire") or v:IsA("Sparkles") then
+        v.Enabled = false
+    end
+end
+
+task.spawn(function()
+    while task.wait(1.5) do
+        if _G.NS_SETTINGS.FPSBoost then
+            pcall(function()
+                Lighting.GlobalShadows = false
+                Lighting.OutdoorAmbient = Color3.fromRGB(128, 128, 128)
+                for _, effect in pairs(Lighting:GetChildren()) do
+                    if effect:IsA("PostEffect") or effect:IsA("BloomEffect") or effect:IsA("BlurEffect") or effect:IsA("ColorCorrectionEffect") then
+                        effect.Enabled = false
+                    end
+                end
+                for _, object in pairs(workspace:GetDescendants()) do
+                    if not object:IsDescendantOf(player.Character) and not object:IsA("Camera") then
+                        OptimizeInstance(object)
+                    end
+                end
+            end)
+        end
+    end
+end)
+
+workspace.DescendantAdded:Connect(function(descendant)
+    if _G.NS_SETTINGS.FPSBoost then
+        task.wait()
+        pcall(function()
+            if not descendant:IsDescendantOf(player.Character) then OptimizeInstance(descendant) end
+        end)
+    end
+end)
+
+----------------------------------------------------------------
+-- // ESP SYSTEM
+----------------------------------------------------------------
+local function ManageRedESP()
+    for _, targetPlayer in pairs(Players:GetPlayers()) do
+        if targetPlayer ~= player and targetPlayer.Character then
+            local char = targetPlayer.Character
+            local highlight = char:FindFirstChild("Noskill_Red_ESP")
+            if _G.NS_SETTINGS.ESPEnabled then
+                if not highlight then
+                    highlight = Instance.new("Highlight")
+                    highlight.Name = "Noskill_Red_ESP"
+                    highlight.FillColor = Color3.fromRGB(255, 0, 0)
+                    highlight.OutlineColor = Color3.fromRGB(255, 0, 0)
+                    highlight.FillTransparency = 0.4
+                    highlight.OutlineTransparency = 0
+                    highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+                    highlight.Parent = char
+                end
+            else
+                if highlight then highlight:Destroy() end
+            end
+        end
+    end
+end
+
+----------------------------------------------------------------
+-- // RENDERING DRAWING COMPONENT LAYER (CHROMA & TETHERS)
+----------------------------------------------------------------
+local FOVCircle = Drawing.new("Circle")
+FOVCircle.Thickness, FOVCircle.Filled, FOVCircle.Visible = 2, false, true
+
+local PillarBeamArray = {}
+local function ManageSkyTethers()
+    if not _G.NS_SETTINGS.DoubleTether then
+        for _, obj in pairs(PillarBeamArray) do
+            obj.L1.Visible = false; obj.L2.Visible = false
+        end
+        return
+    end
+    
+    local coreCharacter = player.Character
+    local coreHRP = coreCharacter and coreCharacter:FindFirstChild("HumanoidRootPart")
+    local coreHead = coreCharacter and coreCharacter:FindFirstChild("Head")
+    if not coreHRP or not coreHead then return end
+    
+    local skyWorldOrigin = coreHRP.Position + Vector3.new(0, 400, 0)
+    local skyScreenPos, skyOnScreen = camera:WorldToViewportPoint(skyWorldOrigin)
+    local headScreenPos, headOnScreen = camera:WorldToViewportPoint(coreHead.Position)
+    
+    for _, targetPlayer in pairs(Players:GetPlayers()) do
+        if targetPlayer ~= player and targetPlayer.Character and targetPlayer.Character:FindFirstChild("Head") then
+            local tHead = targetPlayer.Character.Head
+            local tHum = targetPlayer.Character:FindFirstChildOfClass("Humanoid")
+            
+            if tHum and tHum.Health > 0 then
+                if not PillarBeamArray[targetPlayer] then
+                    PillarBeamArray[targetPlayer] = {L1 = Drawing.new("Line"), L2 = Drawing.new("Line")}
+                end
+                
+                local elements = PillarBeamArray[targetPlayer]
+                local targetScreenPos, targetOnScreen = camera:WorldToViewportPoint(tHead.Position)
+                
+                if skyOnScreen and headOnScreen then
+                    elements.L1.From = Vector2.new(headScreenPos.X, headScreenPos.Y)
+                    elements.L1.To = Vector2.new(skyScreenPos.X, skyScreenPos.Y)
+                    elements.L1.Color = Color3.fromRGB(255, 0, 0)
+                    elements.L1.Thickness = 1.5
+                    elements.L1.Visible = _G.NS_SETTINGS.UIVisible
+                else
+                    elements.L1.Visible = false
+                end
+                
+                if skyOnScreen and targetOnScreen then
+                    elements.L2.From = Vector2.new(skyScreenPos.X, skyScreenPos.Y)
+                    elements.L2.To = Vector2.new(targetScreenPos.X, targetScreenPos.Y)
+                    elements.L2.Color = Color3.fromRGB(255, 0, 0)
+                    elements.L2.Thickness = 1.2
+                    elements.L2.Visible = _G.NS_SETTINGS.UIVisible
+                else
+                    elements.L2.Visible = false
+                end
+            else
+                if PillarBeamArray[targetPlayer] then
+                    PillarBeamArray[targetPlayer].L1.Visible = false
+                    PillarBeamArray[targetPlayer].L2.Visible = false
+                end
+            end
+        end
+    end
+end
+
+----------------------------------------------------------------
+-- // DESKTOP MASTER INTERFACE
+----------------------------------------------------------------
+local MainGui = Instance.new("ScreenGui", CoreGui)
+MainGui.Name = "Noskill_Core_UI"
+MainGui.ResetOnSpawn = false
+
+local MinimizedBar = Instance.new("TextButton", MainGui)
+MinimizedBar.Size, MinimizedBar.Position = UDim2.new(0, 200, 0, 40), UDim2.new(0.5, -100, 0, 15)
+MinimizedBar.Text, MinimizedBar.Font, MinimizedBar.TextColor3 = "NOSKILL HUB (OPEN)", Enum.Font.GothamBold, Color3.fromRGB(255,255,255)
+MinimizedBar.TextSize, MinimizedBar.Visible = 13, false
+ApplyLiquidGlass(MinimizedBar, 0.25, 0.3)
+
+local MainFrame = Instance.new("Frame", MainGui)
+MainFrame.Size, MainFrame.Position = UDim2.new(0, 440, 0, 430), UDim2.new(0.5, -220, 0.5, -215)
+MainFrame.Active, MainFrame.Draggable, MainFrame.Visible = true, true, true
+ApplyLiquidGlass(MainFrame, 0.35, 0.5)
+
+local Title = Instance.new("TextLabel", MainFrame)
+Title.Size = UDim2.new(1, -60, 0, 30)
+Title.Position = UDim2.new(0, 0, 0, 8)
+Title.Text = "NOSKILL HUB V8 PREMIUM | LIQUID GLASS EDITION"
+Title.TextColor3, Title.Font, Title.TextSize = Color3.new(1, 1, 1), Enum.Font.GothamBold, 14
+Title.TextXAlignment, Title.BackgroundTransparency = Enum.TextXAlignment.Center, 1
+
+local SocialFootnote = Instance.new("TextLabel", MainFrame)
+SocialFootnote.Size = UDim2.new(1, 0, 0, 16)
+SocialFootnote.Position = UDim2.new(0, 0, 0, 34)
+SocialFootnote.Text = "YT: Tryty-editz | TT: @Mr.tryty"
+SocialFootnote.TextColor3, SocialFootnote.Font, SocialFootnote.TextSize = Color3.fromRGB(255, 100, 100), Enum.Font.GothamBold, 11
+SocialFootnote.TextXAlignment, SocialFootnote.BackgroundTransparency = Enum.TextXAlignment.Center, 1
+
+local CloseBtn = Instance.new("TextButton", MainFrame)
+CloseBtn.Size = UDim2.new(0, 24, 0, 24)
+CloseBtn.Position = UDim2.new(1, -34, 0, 12)
+CloseBtn.Text = "X"
+CloseBtn.TextColor3, CloseBtn.Font, CloseBtn.TextSize = Color3.new(1, 1, 1), Enum.Font.GothamBold, 12
+ApplyLiquidGlass(CloseBtn, 0.2, 0.4)
+if CloseBtn:FindFirstChildOfClass("UICorner") then
+    CloseBtn:FindFirstChildOfClass("UICorner").CornerRadius = UDim.new(0, 6)
+end
+
+local Container = Instance.new("ScrollingFrame", MainFrame)
+Container.Size, Container.Position = UDim2.new(1, -20, 1, -80), UDim2.new(0, 10, 0, 70)
+Container.BackgroundTransparency, Container.CanvasSize = 1, UDim2.new(0, 0, 6.5, 0)
+Container.ScrollBarThickness = 4
+Instance.new("UIListLayout", Container).Padding = UDim.new(0, 6)
+
+local DiscordCardFrame = Instance.new("Frame", Container)
+DiscordCardFrame.Size = UDim2.new(1, -10, 0, 42)
+ApplyLiquidGlass(DiscordCardFrame, 0.25, 0.5)
+DiscordCardFrame.UIStroke.Color = Color3.fromRGB(88, 101, 242) 
+
+local DiscordActionBtn = Instance.new("TextButton", DiscordCardFrame)
+DiscordActionBtn.Size = UDim2.new(1, 0, 1, 0)
+DiscordActionBtn.Text = "   📱 JOIN OFFICIAL DISCORD SERVER (CLICK TO COPY)"
+DiscordActionBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+DiscordActionBtn.Font = Enum.Font.GothamBold
+DiscordActionBtn.TextSize = 12
+DiscordActionBtn.TextXAlignment = Enum.TextXAlignment.Left
+DiscordActionBtn.BackgroundTransparency = 1
+
+DiscordActionBtn.MouseEnter:Connect(function()
+    TweenService:Create(DiscordCardFrame, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {BackgroundColor3 = Color3.fromRGB(88, 101, 242), BackgroundTransparency = 0.4}):Play()
+end)
+DiscordActionBtn.MouseLeave:Connect(function()
+    TweenService:Create(DiscordCardFrame, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {BackgroundColor3 = Color3.fromRGB(25, 25, 30), BackgroundTransparency = 0.25}):Play()
+end)
+
+DiscordActionBtn.MouseButton1Click:Connect(function()
+    if setclipboard then
+        setclipboard(DISCORD_LINK)
+        DiscordActionBtn.Text = "   ✔️ INSTANT COPY SUCCESSFUL! LINKED TO CLIPBOARD"
+        DiscordActionBtn.TextColor3 = Color3.fromRGB(50, 255, 50)
+        task.spawn(function()
+            task.wait(2.5)
+            DiscordActionBtn.Text = "   📱 JOIN OFFICIAL DISCORD SERVER (CLICK TO COPY)"
+            DiscordActionBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        end)
+    else
+        DiscordActionBtn.Text = "   ❌ CURRENT EXECUTOR LACKS CLIPBOARD COMPATIBILITY"
+        DiscordActionBtn.TextColor3 = Color3.fromRGB(255, 50, 50)
+    end
+end)
+
+local RivalsAlertCard = Instance.new("Frame", Container)
+RivalsAlertCard.Size = UDim2.new(1, -10, 0, 55)
+ApplyLiquidGlass(RivalsAlertCard, 0.2, 0.4)
+RivalsAlertCard.UIStroke.Color = Color3.fromRGB(255, 165, 0)
+
+local AlertText = Instance.new("TextLabel", RivalsAlertCard)
+AlertText.Size = UDim2.new(1, -16, 1, -6)
+AlertText.Position = UDim2.new(0, 8, 0, 3)
+AlertText.Text = "⚠️ RIVALS NOTICE: The aimbot tracking logic requires optimization for this title. You MUST TAP the shoot key. Do NOT hold it down for ARs or spam weapons!"
+AlertText.TextColor3 = Color3.fromRGB(255, 230, 180)
+AlertText.Font = Enum.Font.GothamBold
+AlertText.TextSize = 11
+AlertText.TextWrapped = true
+AlertText.BackgroundTransparency = 1
+
+local GlobalListeningKey = nil
+local function CreateToggle(name, setting, hasKeybind)
+    local Btn = Instance.new("TextButton", Container)
+    Btn.Size, Btn.TextColor3, Btn.Font = UDim2.new(1, -10, 0, 36), Color3.new(1, 1, 1), Enum.Font.Gotham
+    Btn.TextXAlignment, Btn.TextSize = Enum.TextXAlignment.Left, 13
+    ApplyLiquidGlass(Btn, 0.4, 0.7)
+    AddHoverAnimation(Btn)
+    
+    Btn.MouseButton1Click:Connect(function() 
+        if _G.SelectedPlatform == "Desktop" and hasKeybind then
+            if GlobalListeningKey == setting then
+                GlobalListeningKey = nil
+            else
+                GlobalListeningKey = setting
+                return
+            end
+        end
+        _G.NS_SETTINGS[setting] = not _G.NS_SETTINGS[setting] 
+    end)
+
+    RunService.RenderStepped:Connect(function()
+        local enabled = _G.NS_SETTINGS[setting]
+        local appendKey = ""
+        
+        if _G.SelectedPlatform == "Desktop" and hasKeybind then
+            if GlobalListeningKey == setting then
+                appendKey = " [Press Any Key]"
+            else
+                appendKey = " [" .. Keybinds[setting].Name .. "]"
+            end
+        end
+        
+        Btn.Text = "   " .. name .. appendKey
+        Btn.TextColor3 = enabled and Color3.fromRGB(255, 50, 50) or Color3.fromRGB(255, 255, 255)
+        Btn.UIStroke.Color = enabled and Color3.fromRGB(255, 0, 0) or Color3.fromRGB(255, 255, 255)
+    end)
+end
+
+local function CreateSlider(name, min, max, setting)
+    local SliderFrame = Instance.new("Frame", Container)
+    SliderFrame.Size, SliderFrame.BackgroundTransparency = UDim2.new(1, -10, 0, 45), 1
+    
+    local Label = Instance.new("TextButton", SliderFrame)
+    Label.Size, Label.BackgroundTransparency = UDim2.new(1, 0, 1, 0), 1
+    Label.Text, Label.TextColor3, Label.Font, Label.TextSize = "", Color3.new(1,1,1), Enum.Font.Gotham, 12
+    Label.TextXAlignment = Enum.TextXAlignment.Left
+    
+    local Background = Instance.new("Frame", SliderFrame)
+    Background.Size, Background.Position = UDim2.new(1, -20, 0, 5), UDim2.new(0, 10, 0, 30)
+    ApplyLiquidGlass(Background, 0.2, 0.5)
+    
+    local Fill = Instance.new("Frame", Background)
+    Fill.Size = UDim2.new(0, 0, 1, 0)
+    ApplyLiquidGlass(Fill, 0.1, 0.1)
+    Fill.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+    
+    local dragging = false
+    local function Update(input)
+        local delta = math.clamp((input.Position.X - Background.AbsolutePosition.X) / Background.AbsoluteSize.X, 0, 1)
+        local val = min + (max - min) * delta
+        if setting == "GravityValue" then
+            _G.NS_SETTINGS[setting] = math.round(val * 10) / 10
+        else
+            _G.NS_SETTINGS[setting] = math.floor(val)
+        end
+    end
+    
+    Label.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true; Update(input)
+        end
+    end)
+    UserInputService.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then dragging = false end
+    end)
+    UserInputService.InputChanged:Connect(function(input)
+        if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then Update(input) end
+    end)
+    
+    RunService.RenderStepped:Connect(function()
+        local currentVal = _G.NS_SETTINGS[setting]
+        Label.Text = "   " .. name .. ": " .. tostring(currentVal)
+        Fill.Size = UDim2.new((currentVal - min) / (max - min), 0, 1, 0)
+    end)
+end
+
+local function CreateButton(name, callback)
+    local Btn = Instance.new("TextButton", Container)
+    Btn.Size, Btn.TextColor3, Btn.Font = UDim2.new(1, -10, 0, 36), Color3.new(1, 1, 1), Enum.Font.GothamBold
+    Btn.Text, Btn.TextSize = "   " .. name, 13
+    Btn.TextXAlignment = Enum.TextXAlignment.Left
+    ApplyLiquidGlass(Btn, 0.3, 0.6)
+    AddHoverAnimation(Btn)
+    Btn.MouseButton1Click:Connect(callback)
+end
+
+local UIAnimationBusy = false
+local function ToggleMasterUI()
+    if UIAnimationBusy then return end
+    UIAnimationBusy = true
+    
+    if MainFrame.Visible then
+        local anim = TweenService:Create(MainFrame, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.In), {
+            Size = UDim2.new(0, 0, 0, 0),
+            Position = UDim2.new(0.5, 0, 0.5, 0)
+        })
+        anim:Play()
+        anim.Completed:Wait()
+        MainFrame.Visible, MinimizedBar.Visible = false, true
+        
+        MinimizedBar.Size = UDim2.new(0, 0, 0, 40)
+        TweenService:Create(MinimizedBar, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Size = UDim2.new(0, 200, 0, 40)}):Play()
+    else
+        MinimizedBar.Visible = false
+        MainFrame.Visible = true
+        MainFrame.Size = UDim2.new(0, 0, 0, 0)
+        MainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
+        
+        local openTween = TweenService:Create(MainFrame, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+            Size = UDim2.new(0, 440, 0, 430),
+            Position = UDim2.new(0.5, -220, 0.5, -215)
+        })
+        openTween:Play()
+        openTween.Completed:Wait()
+    end
+    UIAnimationBusy = false
+end
+CloseBtn.MouseButton1Click:Connect(ToggleMasterUI)
+MinimizedBar.MouseButton1Click:Connect(ToggleMasterUI)
+
+-- Populating Controls with Dynamic Config Indicators
+CreateToggle("Full Body Aimbot Lock", "Locking", true)
+CreateSlider("Body Rotation Smoothness", 1, 12, "Smoothness")
+CreateToggle("Target Aggressive Stick", "HardLock", false)
+CreateToggle("Advanced Wall Raycast Check", "WallCheck", false)
+CreateSlider("Custom FOV Radius Monitor", 10, 800, "FOV")
+CreateToggle("Adaptive 3D Sky Tethers", "DoubleTether", false)
+CreateToggle("Full Red Box Highlight ESP Core", "ESPEnabled", false)
+CreateToggle("Bypassed Skeleton Framework", "ESPSkeleton", false)
+CreateToggle("Direct Target Aim Line", "ESPTargetLine", false)
+CreateToggle("Velocity Frame Translation Speed", "SpeedEnabled", true)
+CreateSlider("Frame Acceleration Multiplier", 16, 250, "MaxSpeed")
+CreateToggle("Dynamic State Jump Boost", "JumpBoostEnabled", true)
+CreateSlider("Jump Boost Force Modifier", 30, 200, "JumpPower")
+CreateToggle("Infinite Air State Jump Trigger", "InfJump", false)
+CreateToggle("Bypassed Noclip Collision Patch", "NoClip", false)
+CreateToggle("Ultra Trigger Bot (0.1ms AutoShoot)", "AutoShoot", false)
+CreateToggle("Ultra Low Quality FPS Booster", "FPSBoost", false)
+CreateToggle("Continuous Match Auto-Requeue", "AutoStart", false)
+CreateToggle("Static Lower-Body Skeletal Lock", "NoWalkAnim", false)
+CreateSlider("Global Workspace Gravitational Pool", 0, 196, "GravityValue")
+CreateSlider("Terminal Gravitational Fall Cap", 50, 300, "DropLimit")
+CreateButton("Trigger Fast Instant Terminal Fall", function() _G.NS_SETTINGS.DownActive = true end)
+CreateButton("Broadcast Server Wide Taunt Payload", SendTaunt)
+CreateButton("Save Profile Preset Setup", function() SaveConfigProfile() end)
+CreateButton("Load Profile Preset Setup", function() LoadConfigProfile() end)
+CreateButton("COMPLETE MEMORY FLUSH (GHOST PURGE)", function()
+    local flushTween = TweenService:Create(MainFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {Size = UDim2.new(0,0,0,0), BackgroundTransparency = 1})
+    flushTween:Play()
+    flushTween.Completed:Wait()
+    MainGui:Destroy()
+    FOVCircle:Remove()
+    TargetLine:Remove()
+    for _, item in pairs(PillarBeamArray) do item.L1:Remove() item.L2:Remove() end
+    for _, targetPlayer in pairs(Players:GetPlayers()) do
+        if targetPlayer.Character and targetPlayer.Character:FindFirstChild("Noskill_Red_ESP") then
+            targetPlayer.Character.Noskill_Red_ESP:Destroy()
+        end
+    end
+end)
+
+----------------------------------------------------------------
+-- // SIDEBAR NAVIGATION LAYOUT (MOBILE SPRING TRANSITIONS)
+----------------------------------------------------------------
+local MobileBtnMain = Instance.new("TextButton", MainGui)
+MobileBtnMain.Name = "NS_Hub_Glass_Sidebar"
+MobileBtnMain.Size, MobileBtnMain.Position = UDim2.new(0, 80, 0, 45), UDim2.new(0, 15, 0.4, 0)
+MobileBtnMain.Text, MobileBtnMain.Font, MobileBtnMain.TextColor3 = "NS hub", Enum.Font.GothamBold, Color3.new(1,1,1)
+MobileBtnMain.Draggable, MobileBtnMain.TextSize = true, 12
+ApplyLiquidGlass(MobileBtnMain, 0.2, 0.4)
+
+local MobScroll = Instance.new("ScrollingFrame", MobileBtnMain)
+MobScroll.Size, MobScroll.Position = UDim2.new(0, 135, 0, 0), UDim2.new(1.1, 0, 0, 0)
+MobScroll.CanvasSize, MobScroll.ScrollBarThickness = UDim2.new(0, 0, 0, 930), 4
+MobScroll.ScrollingEnabled, MobScroll.Visible = true, false
+ApplyLiquidGlass(MobScroll, 0.15, 0.5)
+Instance.new("UIListLayout", MobScroll).Padding = UDim.new(0, 5)
+
+local SidebarAnimationBusy = false
+MobileBtnMain.MouseButton1Click:Connect(function()
+    if SidebarAnimationBusy then return end
+    SidebarAnimationBusy = true
+    
+    if MobScroll.Visible then
+        MobScroll:TweenSize(UDim2.new(0, 135, 0, 0), "In", "Back", 0.25, true, function()
+            MobScroll.Visible = false
+            SidebarAnimationBusy = false
+        end)
+    else
+        MobScroll.Visible = true
+        MobScroll.Size = UDim2.new(0, 135, 0, 0)
+        MobScroll:TweenSize(UDim2.new(0, 135, 0, 380), "Out", "Back", 0.35, true, function()
+            SidebarAnimationBusy = false
+        end)
+    end
+end)
+
+local function CreateMobileActionElement(titleText, trackingField, executableFunction)
+    local b = Instance.new("TextButton", MobScroll)
+    b.Size, b.TextColor3, b.Font, b.TextSize = UDim2.new(1, -10, 0, 35), Color3.new(1,1,1), Enum.Font.GothamBold, 11
+    ApplyLiquidGlass(b, 0.3, 0.6)
+    
+    if trackingField then
+        b.MouseButton1Click:Connect(function() _G.NS_SETTINGS[trackingField] = not _G.NS_SETTINGS[trackingField] end)
+        RunService.RenderStepped:Connect(function()
+            local status = _G.NS_SETTINGS[trackingField] and ": ON" or ": OFF"
+            b.Text = titleText .. status
+            b.TextColor3 = _G.NS_SETTINGS[trackingField] and Color3.fromRGB(255, 50, 50) or Color3.fromRGB(255,255,255)
+        end)
+    else
+        b.Text = titleText
+        if executableFunction then b.MouseButton1Click:Connect(executableFunction) end
+    end
+end
+
+CreateMobileActionElement("UI TOGGLE MAIN", nil, ToggleMasterUI)
+CreateMobileActionElement("PROFILE QUICK LOAD", nil, function() LoadConfigProfile() end)
+CreateMobileActionElement("PROFILE QUICK SAVE", nil, function() SaveConfigProfile() end)
+CreateMobileActionElement("BODY AIM LOCK", "Locking")
+CreateMobileActionElement("WALL CHECK", "WallCheck")
+CreateMobileActionElement("AGGRESSIVE STICK", "HardLock")
+CreateMobileActionElement("3D SKY TETHERS", "DoubleTether")
+CreateMobileActionElement("BOX ESP", "ESPEnabled")
+CreateMobileActionElement("SKELETON ESP", "ESPSkeleton")
+CreateMobileActionElement("TARGET TRACK LINE", "ESPTargetLine")
+CreateMobileActionElement("VELOCITY SPEED", "SpeedEnabled")
+CreateMobileActionElement("JUMP BOOST FORCE", "JumpBoostEnabled")
+CreateMobileActionElement("INFINITE AIR JUMP", "InfJump")
+CreateMobileActionElement("NOCLIP INTERACTION", "NoClip")
+CreateMobileActionElement("0.1MS AUTO-SHOOT", "AutoShoot")
+CreateMobileActionElement("LOW MEM OPTIMIZER", "FPSBoost")
+CreateMobileActionElement("AUTO START MATCH", "AutoStart")
+CreateMobileActionElement("ANTI WALKING ANIM", "NoWalkAnim")
+CreateMobileActionElement("INSTANT TERMINAL DROP", nil, function() _G.NS_SETTINGS.DownActive = true end)
+CreateMobileActionElement("TAUNT NETWORK BLAST", nil, SendTaunt)
+
+----------------------------------------------------------------
+-- // HIGH-PRECISION SPEEDOMETER ENGINE
+----------------------------------------------------------------
+local BillboardGui = Instance.new("BillboardGui", CoreGui)
+BillboardGui.Size = UDim2.new(0, 160, 0, 45)
+BillboardGui.AlwaysOnTop = true
+
+local MetricsCard = Instance.new("TextLabel", BillboardGui)
+MetricsCard.Size = UDim2.new(1, 0, 1, 0)
+MetricsCard.TextColor3, MetricsCard.Font, MetricsCard.TextSize = Color3.fromRGB(255, 50, 50), Enum.Font.GothamBold, 11
+MetricsCard.TextStrokeTransparency = 0.5
+ApplyLiquidGlass(MetricsCard, 0.4, 0.6)
+
+task.spawn(function()
+    local frameRenderIteration = 0
+    local samplingTimeframe = tick()
+    local calculatedFPS = 60
+    local lastTrackedPosition = Vector3.new(0,0,0)
+    local calculatedVelocity = 0
+    
+    RunService.RenderStepped:Connect(function(dt)
+        frameRenderIteration = frameRenderIteration + 1
+        if tick() - samplingTimeframe >= 0.5 then
+            calculatedFPS = math.floor(frameRenderIteration / (tick() - samplingTimeframe))
+            frameRenderIteration = 0
+            samplingTimeframe = tick()
+        end
+        
+        local characterModel = player.Character
+        local hrpComponent = characterModel and characterModel:FindFirstChild("HumanoidRootPart")
+        
+        if hrpComponent and characterModel:FindFirstChild("Head") then
+            BillboardGui.Adornee = characterModel.Head
+            BillboardGui.StudsOffset = Vector3.new(0, 3.5, 0)
+            local currentPosition = hrpComponent.Position
+            if lastTrackedPosition ~= Vector3.new(0,0,0) and dt > 0 then
+                local distanceMoved = (currentPosition - lastTrackedPosition).Magnitude
+                calculatedVelocity = math.floor(distanceMoved / dt)
+            end
+            lastTrackedPosition = currentPosition
+            if calculatedVelocity > 1500 then calculatedVelocity = 0 end
+            MetricsCard.Text = "⚡ NOSKILL HUB METRICS\nFPS: " .. calculatedFPS .. " | VEL: " .. calculatedVelocity .. " studs/sec"
+        else
+            BillboardGui.Adornee = nil
+            lastTrackedPosition = Vector3.new(0,0,0)
+            calculatedVelocity = 0
+        end
+    end)
+end)
+
+----------------------------------------------------------------
+-- // CAMERA ENGINE, TARGET IDENTIFICATION, AND RENDERING HOOKS
+----------------------------------------------------------------
+local chromaHueRegistry = 0
+RunService.RenderStepped:Connect(function()
+    chromaHueRegistry = chromaHueRegistry + 0.004
+    if chromaHueRegistry > 1 then chromaHueRegistry = 0 end
+    local currentChromaRGB = Color3.fromHSV(chromaHueRegistry, 0.9, 1)
+    
+    if _G.NS_SETTINGS.UIVisible then
+        FOVCircle.Position = Vector2.new(camera.ViewportSize.X / 2, camera.ViewportSize.Y / 2)
+        FOVCircle.Radius = _G.NS_SETTINGS.FOV
+        FOVCircle.Color = currentChromaRGB
+        FOVCircle.Visible = true
+    else
+        FOVCircle.Visible = false
+    end
+    
+    pcall(ManageSkyTethers)
+    pcall(ManageRedESP)
+    
+    local optimalTarget = nil
+    local minimumDistance = _G.NS_SETTINGS.FOV
+    
+    for _, targetPlayer in pairs(Players:GetPlayers()) do
+        if targetPlayer ~= player and targetPlayer.Character and targetPlayer.Character:FindFirstChild("Head") then
+            local head = targetPlayer.Character.Head
+            local hum = targetPlayer.Character:FindFirstChildOfClass("Humanoid")
+            if hum and hum.Health > 0 then
+                local screenPos, onScreen = camera:WorldToViewportPoint(head.Position)
+                local dist = (Vector2.new(camera.ViewportSize.X/2, camera.ViewportSize.Y/2) - Vector2.new(screenPos.X, screenPos.Y)).Magnitude
+                if IsVisible(head) and dist < minimumDistance then
+                    minimumDistance = dist
+                    optimalTarget = targetPlayer
+                end
+            end
+        end
+    end
+    
+    CurrentSelectedTarget = optimalTarget
+    
+    if optimalTarget and _G.NS_SETTINGS.Locking then
+        local destinationHead = optimalTarget.Character.Head
+        local computedTargetCFrame = CFrame.lookAt(camera.CFrame.Position, destinationHead.Position)
+        local smoothFactor = math.clamp(_G.NS_SETTINGS.Smoothness / 10, 0.05, 1)
+        camera.CFrame = camera.CFrame:Lerp(computedTargetCFrame, smoothFactor)
+        
+        if _G.NS_SETTINGS.HardLock and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+            player.Character.HumanoidRootPart.CFrame = destinationHead.CFrame * CFrame.new(0, 0, 2.5)
+        end
+    end
+end)
